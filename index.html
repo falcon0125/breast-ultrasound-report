@@ -100,11 +100,9 @@
                     document.execCommand("copy");
                     $temp.remove();
                     console.log($(this).text()+"=>copy");
-                    gtag('send', {
-                        hitType: 'event',
-                        eventCategory: 'Copy',
-                        eventAction: 'press',
-                        eventLabel: $(this).text()
+                    gtag('event', 'copy',{
+                            keyword:$(this).text(),
+                            event_callback: function(){console.log("ga copy")}
                         });
                     //gtag('send', 'pageview', 'q='+encodeURI($(this).text())); 
 
@@ -121,13 +119,12 @@
             qw = $("#search_text").val();
             console.log(qw)
             display(qw)
-            gtag('send', {
-                hitType: 'event',
-                eventCategory: 'search',
-                eventAction: 'send',
-                eventLabel: qw
-            });
-            gtag('send', 'pageview', '/?q='+encodeURI(qw)); 
+            gtag('event', 'search',{
+                search_term:qw,
+                event_callback: function(){console.log("ga copy")}
+                });
+            gtag('config', 'GA_MEASUREMENT_ID', {page_path:'/?q='+encodeURI(qw)}
+            ); 
 
         })
         function filter_result(q) {
