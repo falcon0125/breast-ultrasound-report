@@ -106,6 +106,7 @@
                         eventAction: 'press',
                         eventLabel: $(this).text()
                         });
+                    //gtag('send', 'pageview', 'q='+encodeURI($(this).text())); 
 
             });
     }
@@ -125,7 +126,8 @@
                 eventCategory: 'search',
                 eventAction: 'send',
                 eventLabel: qw
-});
+            });
+            gtag('send', 'pageview', '?q='+encodeURI(qw)); 
 
         })
         function filter_result(q) {
