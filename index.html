@@ -123,8 +123,8 @@ window.jQuery || document.write('<script src="/jquery.min.js"><\/script>')
             console.log(qw)
             display(qw)
             gtag('event', 'search',{
-                search_term:qw,
-                event_callback: function(){console.log("ga copy")}
+                'search_term':qw,
+                event_callback: function(){console.log("ga search")}
                 });
             gtag('config', 'GA_MEASUREMENT_ID', {page_path:'/?q='+encodeURI(qw)}
             ); 
