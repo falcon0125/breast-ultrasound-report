@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="IE=edge"
+        http-equiv="X-UA-Compatible">
+  <title>Breast report</title>
+  <meta content=""
+        name="description">
+  <meta content="width=device-width, initial-scale=1"
+        name="viewport">
+  <script src="./jquery-3.1.1.min.js"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-89357965-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-89357965-1');
+</script>
+
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata"
+        rel="stylesheet">
+  <style type="text/css">
+  div#phrase{
+      padding:10pt;
+      margin:5pt;
+      width:90%;
+      border: 1px gray solid;
+      box-shadow:4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+  }
+  h3{
+      font-family: Arial, Helvetica, sans-serif;
+      font-size:16pt;
+      margin-top:2pt;
+      margin-bottom:2pt;
+      margin-left: 0pt;
+  }
+  pre{
+      display: inline;
+      width: 60pt;
+      white-space: pre-wrap;
+      font-family: Inconsolata;
+      font-size:10pt;
+      
+  }
+  
+  </style>
+  <script>
+
+  function display(q) {
+    // tidy 
+    q = String(q).trim()
+            //s =''
+            if (q == '') {
+                l = phrases
+
+            } else { //s='one two' or 'oneword'
+                qg = q.split(/\s/)
+                qg = qg.map(x => RegExp(x, 'igm'))
+                l = phrases.filter(x => x.some(y => qg.every(z => y.search(z) != -1)))
+            }
+            // number of result
+            if (l.length == 0) {
+                $("<p>no result<\/p>").appendTo($("#result"));
+            }
+            function hammingDistance(a, b) {
+                if (a.length !== b.length) {
+                    let distance =  Math.abs(a.length - b.length) * 4
+                    //console.log(a, distance)
+                    return distance;
+                }
+                else{
+                let distance = 0;
+
+                for (let i = 0; i < a.length; i += 1) {
+                    if (a[i] !== b[i]) {
+                        distance += 1;
+                    }
+                }
+                return distance;
+                }
+            }
+
+            l.sort(function(a,b){
+                return( (hammingDistance(a[0],qw) - hammingDistance(b[0],qw)) )
+            })
+            $("<p>" + l.length + "<\/p>").appendTo($("#result"));
+            r = l.map(x => `<div id='phrase'><h3>${x[0]}<\/h3><pre>${x[1]}<\/pre><\/div>`)
+            r.forEach(x => $(x).appendTo($("#result")))
+            
+            
+            $("h3").dblclick(function(){ 
+                var text = $(this).next().text()
+                var $temp = $("<textarea>");
+                    $("body").append($temp);
+                    $temp.val(text).select();
+                    document.execCommand("copy");
+                    $temp.remove();
+                    console.log($(this).text()+"=>copy");
+                    gtag('send', {
+                        hitType: 'event',
+                        eventCategory: 'Copy',
+                        eventAction: 'press',
+                        eventLabel: $(this).text()
+                        });
+
+            });
+    }
+    $.getJSON("./breast.json", function (data) {
+        phrases = data;
+        // filter out some old phrases start with 1xxxx
+        //phrases = phrases.filter(x=>x[0].search(/^1(b|bm|u|m)/igm)==-1 ).filter(x=>x[0].search(/^[\d]{2}/igm)==-1 )
+    });
+    $(document).ready(function () {
+        $('#submit').click(function () {
+            $("#result").empty()
+            qw = $("#search_text").val();
+            console.log(qw)
+            display(qw)
+            gtag('send', {
+                hitType: 'event',
+                eventCategory: 'search',
+                eventAction: 'send',
+                eventLabel: qw
+});
+
+        })
+        function filter_result(q) {
+            return (dummy.filter(x => x[0].search(q) != -1))
+        }
+
+  $('#search_text').on('change',function(){
+    $("#submit").click();
+  });
+
+  
+
+  });
+
+  </script>
+</head>
+<body>
+  <div id="base">
+    <input id='search_text'
+         type="text"> <input id='submit'
+         type="button"
+         value="GO">
+         <!---
+         <form id="filter_form">
+            <input type="checkbox" name="short" value="short"> short
+            <input type="checkbox" name="long" value="long"> long
+          </form> 
+          --->
+  </div>
+  <div id='result'></div>
+</body>
+</html>
+
