@@ -100,7 +100,7 @@
                     document.execCommand("copy");
                     $temp.remove();
                     console.log($(this).text()+"=>copy");
-                    gtag('send', {
+                    ga('send', {
                         hitType: 'event',
                         eventCategory: 'Copy',
                         eventAction: 'press',
@@ -121,13 +121,13 @@
             qw = $("#search_text").val();
             console.log(qw)
             display(qw)
-            gtag('send', {
+            ga('send', {
                 hitType: 'event',
                 eventCategory: 'search',
                 eventAction: 'send',
                 eventLabel: qw
             });
-            gtag('send', 'pageview', '?q='+encodeURI(qw)); 
+            ga('send', 'pageview', '?q='+encodeURI(qw)); 
 
         })
         function filter_result(q) {
